@@ -1,0 +1,27 @@
+{
+  "logistics_costs": {
+    "truck_cost_per_km": 10000,
+    "express_3pl_base_cost": 25000,
+    "min_bulk_items_threshold": 5
+  },
+  "tier_bypass_rules": {
+    "BRONZE": { 
+      "allow_margin_loss": false, 
+      "description": "Standard Customer: Profit margin must be positive to allow shipping." 
+    },
+    "SILVER": { 
+      "allow_margin_loss": false, 
+      "description": "Silver Customer: Profit margin must be positive." 
+    },
+    "GOLD": { 
+      "allow_margin_loss": true, 
+      "max_allowed_loss": 30000, 
+      "description": "Gold Customer: Maximum shipping loss of 30,000 VND allowed to protect customer experience." 
+    },
+    "PLATINUM": { 
+      "allow_margin_loss": true, 
+      "max_allowed_loss": 100000, 
+      "description": "Platinum Customer: Maximum shipping loss of 100,000 VND allowed." 
+    }
+  }
+}
