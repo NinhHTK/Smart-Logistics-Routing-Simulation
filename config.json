@@ -1,27 +1,50 @@
-{
-  "logistics_costs": {
-    "truck_cost_per_km": 10000,
-    "express_3pl_base_cost": 25000,
-    "min_bulk_items_threshold": 5
-  },
-  "tier_bypass_rules": {
-    "BRONZE": { 
-      "allow_margin_loss": false, 
-      "description": "Standard Customer: Profit margin must be positive to allow shipping." 
-    },
-    "SILVER": { 
-      "allow_margin_loss": false, 
-      "description": "Silver Customer: Profit margin must be positive." 
-    },
-    "GOLD": { 
-      "allow_margin_loss": true, 
-      "max_allowed_loss": 30000, 
-      "description": "Gold Customer: Maximum shipping loss of 30,000 VND allowed to protect customer experience." 
-    },
-    "PLATINUM": { 
-      "allow_margin_loss": true, 
-      "max_allowed_loss": 100000, 
-      "description": "Platinum Customer: Maximum shipping loss of 100,000 VND allowed." 
-    }
-  }
+# config.py
+
+NETWORK_LOCATIONS = {
+    "HUB-00": {"name": "Central Warehouse (Kho Tổng Miền Nam)", "lat": 10.9804, "lon": 106.6519, "type": "Central Warehouse"},
+    "STORE-01": {"name": "Branch Alpha (Quận 1 - Lê Lợi)", "lat": 10.7756, "lon": 106.7019, "type": "Retail Store"},
+    "STORE-02": {"name": "Branch Beta (Thủ Đức - Võ Văn Ngân)", "lat": 10.8494, "lon": 106.7537, "type": "Retail Store"},
+    "STORE-03": {"name": "Branch Gamma (Tân Bình - Trường Chinh)", "lat": 10.8014, "lon": 106.6525, "type": "Retail Store"},
+    "STORE-04": {"name": "Branch Delta (Gò Vấp - Nguyễn Oanh)", "lat": 10.8350, "lon": 106.6660, "type": "Retail Store"},
+    "STORE-05": {"name": "Branch Omega (Quận 7 - Nguyễn Thị Thập)", "lat": 10.7380, "lon": 106.7060, "type": "Retail Store"}
 }
+
+# Ma trận khoảng cách toàn diện (km) - Đã bao gồm cả Kho tổng và các chi nhánh
+DISTANCE_MATRIX = {
+    "Central Warehouse (Kho Tổng Miền Nam)": {
+        "Branch Alpha (Quận 1 - Lê Lợi)": 25.4,
+        "Branch Beta (Thủ Đức - Võ Văn Ngân)": 16.8,
+        "Branch Gamma (Tân Bình - Trường Chinh)": 22.1,
+        "Branch Delta (Gò Vấp - Nguyễn Oanh)": 18.5,
+        "Branch Omega (Quận 7 - Nguyễn Thị Thập)": 29.8
+    },
+    "Branch Alpha (Quận 1 - Lê Lợi)": {
+        "Branch Beta (Thủ Đức - Võ Văn Ngân)": 13.2, 
+        "Branch Gamma (Tân Bình - Trường Chinh)": 6.5, 
+        "Branch Delta (Gò Vấp - Nguyễn Oanh)": 8.1, 
+        "Branch Omega (Quận 7 - Nguyễn Thị Thập)": 5.2
+    },
+    "Branch Beta (Thủ Đức - Võ Văn Ngân)": {
+        "Branch Gamma (Tân Bình - Trường Chinh)": 14.8, 
+        "Branch Delta (Gò Vấp - Nguyễn Oanh)": 10.4, 
+        "Branch Omega (Quận 7 - Nguyễn Thị Thập)": 16.5
+    },
+    "Branch Gamma (Tân Bình - Trường Chinh)": {
+        "Branch Delta (Gò Vấp - Nguyễn Oanh)": 4.3, 
+        "Branch Omega (Quận 7 - Nguyễn Thị Thập)": 11.0
+    },
+    "Branch Delta (Gò Vấp - Nguyễn Oanh)": {
+        "Branch Omega (Quận 7 - Nguyễn Thị Thập)": 13.5
+    }
+}
+
+def get_distance_km(origin, destination):
+    if origin == destination:
+        return 0.0
+    # Kiểm tra chiều đi từ origin -> destination
+    if origin in DISTANCE_MATRIX and destination in DISTANCE_MATRIX[origin]:
+        return DISTANCE_MATRIX[origin][destination]
+    # Kiểm tra chiều ngược lại destination -> origin (vì khoảng cách 2 chiều như nhau)
+    if destination in DISTANCE_MATRIX and origin in DISTANCE_MATRIX[destination]:
+        return DISTANCE_MATRIX[destination][origin]
+    return 10.0 # Giá trị dự phòng an toàn
